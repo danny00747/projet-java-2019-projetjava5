@@ -30,8 +30,8 @@ We are currently starting the design of the architecture.
 
 ## Built with
 
-* [**Eclipse**](https://www.eclipse.org)
-* [**VsCode**](https://code.visualstudio.com) 
+* [Eclipse](https://www.eclipse.org)
+* [Visual Studio Code](https://code.visualstudio.com) 
 
 ## Authors
 
@@ -40,3 +40,6 @@ Group number: 5
 * **Michotte Martin** - [MMichotte](https://github.com/MMichotte)
 * **Perdaens Martin** - [Martinp-95](https://github.com/Martinp-95)
 * **Valentin Morgan** - [momo007Dev](https://github.com/momo007Dev)
+
+## License
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
