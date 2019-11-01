@@ -4,17 +4,20 @@ import java.util.Scanner;
 
 public class Unité {
 	//Déclaration des différentes variable
-	static int nombresUnite = 6;
 	String nom;
+	String nomBonus;
+	String nomJoueur;
+
+	static int nombresUnite = 6;
 	int longueurCase;
 	int LargeurCase;
 	int aireTotal;
+
+	
 	Boolean detruit;
 	Boolean bonus;
-	String nomBonus;
-	int coordonneesEnXY1;
-	int coordonneesEnXY2;
-	
+	Boolean statutJ; // savoir si c'est à lui de jouer
+
 	/**
 	 * Constructeur pour les unité avec un bonus
 	 * */
@@ -28,7 +31,6 @@ public class Unité {
 		this.bonus = bonus;
 		this.nomBonus = nomBonus;
 	}
-	
 	/**
 	 * Constructeur pour les unité sans le bonus
 	 * */
@@ -40,6 +42,14 @@ public class Unité {
 		this.aireTotal = aireTotal;
 		this.detruit = detruit;
 		this.bonus = bonus;
+	}
+	
+	/**
+	 * Constructeur pour le statut des joueurs et son nom
+	 * */
+	public Unité(String nomJoueur,Boolean statutJ) {
+		this.nomJoueur = nomJoueur;
+		this.statutJ = statutJ;
 	}
 	
 	public static void Bonus(Boolean Bonus,String element) {
@@ -63,18 +73,34 @@ public class Unité {
 	}
 		
 	public static void main( String [] args) {
+		/**
+		 * Information sur le joueur
+		 * */
+	    Scanner NomJoueur1 = new Scanner(System.in);
+	    String nomJoueur1;
+	    
+		System.out.println("Veuillez enter un pseudo/Nom");
+		System.out.println("---------------------------");
+
+	    nomJoueur1 = NomJoueur1.nextLine();
+		
+		/**
+		 * Boucle pour attribuer la position des unités
+		 * */
 		
 	   String TableauUnite[][] = new String[6][3];
-	   int i = 0;
-	   while(i < 6) {
+	   int UniteJoueur = 0;
+	   while(UniteJoueur < 6) {
 		   
 		    //Notre objet Scanner
 		    Scanner NomUnite = new Scanner(System.in);
 		    Scanner Coordonee1 = new Scanner(System.in);
 		    Scanner Coordonee2 = new Scanner(System.in);
+
 		    String nomUnite;
 		    String coordonee1;
 		    String coordonee2;
+
 		    
 			System.out.println("Eléments pour placer les différentes unitées");
 			System.out.println("---------------------------");
@@ -85,15 +111,15 @@ public class Unité {
 		    nomUnite = NomUnite.nextLine();
 		    coordonee1 = Coordonee1.nextLine();
 		    coordonee2 = Coordonee2.nextLine();
+ 
+		    TableauUnite[UniteJoueur][0] = nomUnite;
+		    TableauUnite[UniteJoueur][1] = coordonee1;	
+		    TableauUnite[UniteJoueur][2] = coordonee2;	   
 		    
-		    TableauUnite[i][0] = nomUnite;
-		    TableauUnite[i][1] = coordonee1;	
-		    TableauUnite[i][2] = coordonee2;	   
-		    
-		    i++;
+		    UniteJoueur++;
 
 	   }	
-	   System.out.println(TableauUnite[0][0]); 
+	   System.out.println(TableauUnite[0][0]+" "+TableauUnite[1][0]); 
 	    
 
 		// String nom, int longueurCase, int LargeurCase, int aireTotal, Boolean detruit, Boolean bonus, String nomBonus
@@ -104,9 +130,25 @@ public class Unité {
 		Unité vehicule1 = new Unité("Railway Gun", 1, 6, 6, false, true, "Big-shot");
 		Unité vehicule2 = new Unité("MMRL", 2, 2, 4, false, true, "Rocket-strike");
 		Unité vehicule3 = new Unité("Tank", 1, 2, 2, false, false);
-				
+		Unité joueur1 = new Unité(nomJoueur1,false);
+		Unité joueur2 = new Unité("Marc",false);
+
+
+		
 		//while( nombresUnite > 0) {
-						
+		    
+			/**
+			 * Information sur une position à vérifier
+			 * */
+		    Scanner PositionaToucher = new Scanner(System.in);
+		    String positionaToucher;
+		    
+			System.out.println("Veuillez donner une position à cibler");
+			System.out.println("---------------------------");
+	
+			positionaToucher = PositionaToucher.nextLine();
+			System.out.println(positionaToucher);
+			
 			System.out.println("Batiments :\n");
 			Bonus(batiment1.bonus, batiment1.nom);
 			Bonus(batiment2.bonus, batiment2.nom);
@@ -126,6 +168,10 @@ public class Unité {
 			Detruit(vehicule2.aireTotal, vehicule2.nom, vehicule2.detruit);
 			Detruit(vehicule3.aireTotal, vehicule3.nom, vehicule3.detruit);
 			
+			System.out.println(joueur1.nomJoueur);
+			System.out.println(joueur2.nomJoueur);
+
+
 			//nombresUnite--;
 			
 		//}
