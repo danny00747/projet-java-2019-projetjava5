@@ -14,10 +14,17 @@ import java.util.*;
  */
 
 public class Server  
-{ 
+{ 	
+	/*Avec cette variable num (qui n'a l'air de rien) je test la modification par plusieurs thread
+	* Exemple : Client1 add5 (methode voir plus bas...) qui ajoute 5 a num et affiche ce nombre
+	* Avant le Client1 add5 3 fois qui donne 15 et Client2 qui fait add5 => affiche 5
+	* 	=> Variable propre a chaque thread.
+	* Maintenant, Si ClientA fait 3 fois add5 et ClientB fait add5 il verra 20 et non 5.
+	* (Bref, c'est pour que je comprennes mieux)
+	*/
+	protected static int num=0;//Used for user to add 5 (methode add5) to this num variable. (Testing purposes)
 	
-    public static void main(String[] args) throws IOException  
-    { 
+    public static void main(String[] args) throws IOException  { 
     	//Selecting port number from user to use => Plus tard par interface graphique
     	//Attention => Le port du client devra etre identique sinon il ne "verra" pas le server !!
     	
@@ -30,12 +37,11 @@ public class Server
         System.out.println("Waiting for player(s) to connect");
           
         // Infinite loop => Waiting that a client connects {accept() method}
-        while (true)  
-        { 
+        
+        while (true)  { 
             Socket sock = null; //Socket for client communication => "Active" socket
               
-            try 
-            { 
+            try { 
                 // socket object to receive incoming client requests => "Passive" socket
             	
                 sock = servSock.accept();
@@ -72,7 +78,7 @@ class ClientHandler extends Thread
     final DataInputStream in; 
     final DataOutputStream out; 
     final Socket sock; 
-    private int num=0;//Used for user to add 5 to this num variable. (Testing connectivity)
+    //private int num=0;
     private static int numberOfClientsConnected=0;
       
   
@@ -142,10 +148,11 @@ class ClientHandler extends Thread
                         break;
                         
                     case "add5" : 
+                    	
                     	//Adds 5 to the "num" variable and displays its value
-                        num += 5;
-                        out.writeUTF("Server> Num = "+num); 
-                        System.out.println("Value of num : "+num);
+                        Server.num += 5;
+                        out.writeUTF("Server> Num = "+Server.num); 
+                        System.out.println("Value of num : "+Server.num);
                         break; 
                         
                     case "con" : 
