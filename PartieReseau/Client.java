@@ -6,30 +6,29 @@ import java.util.InputMismatchException;
 import java.util.Scanner; 
   
 // Client class 
-public class Client  
-{ 
+public class Client  { 
 	//Colours on ouput => ONLY WORKS ON LINUX (maybe mac ?) NOT WINDOWS
 	protected static final String red    = "\u001B[31m";
 	protected static final String blue   = "\u001B[34m";
 	protected static final String reset  = "\u001B[0m";
 	protected static final String purple = "\u001B[35m";
 	
-    public static void main(String[] args) throws IOException  
-    { 
-        try
-        { 
+    public static void main(String[] args) throws IOException  { 
+        try { 
             Scanner scn = new Scanner(System.in); 
               
-            // Retrieving port and IP address from user input:
+            // Retrieving port from user input :
             System.out.println(purple+"Port number ?"+reset);
     		int port = scn.nextInt();
-    		System.out.println("Client> "+purple+port);
-            System.out.println(red+"IP address ?"+reset);
+    		System.out.println(blue+"Client> "+purple+port);
+    		
+    		//Retrieving ip adress from user input :
+            System.out.println(red+"IP address ? (nothing + enter = localhost)"+reset);
     		String ip = scn.nextLine();
-    		if (ip.length()==0) {
-    			ip = scn.nextLine();
-    		}
-    		System.out.println("Client> "+red+ip+reset);
+    		ip = scn.nextLine();
+    		if (ip.length()==0) {ip = "localhost";}
+    		else if (ip.length()!=0) {System.out.println("ip entered");}
+    		System.out.println(blue+"Client> "+red+ip+reset);
     		
       
             // establish the connection with the server with IP and Port from user input
@@ -44,8 +43,7 @@ public class Client
       
             
             //Infinite loop => "Until user input (you) types "end", read whatever
-            while (true)  
-            { 
+            while (true)  { 
 
                 System.out.println(in.readUTF());//Reads the server's output (stream) 
                 String sendToServer = scn.nextLine();//Holds user input in a variale "tosend"
@@ -53,11 +51,10 @@ public class Client
                 System.out.println(blue+"Client> "+red+sendToServer+reset);
                  
                 // If the client (you) sends "end" => Close the connection
-                if(sendToServer.equals("end")) 
-                { 
-                    System.out.println("Closing this connection : " + sock); 
+                if(sendToServer.equals("end")) { 
+                    System.out.println(blue+"Client>"+reset+" Closing this connection...."); 
                     sock.close(); 
-                    System.out.println("Connection closed"); 
+                    System.out.println(red+"Connection closed"+reset); 
                     break; 
                 } 
                   

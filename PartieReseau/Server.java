@@ -28,6 +28,7 @@ public class Server
 	protected static final String purple = "\u001B[35m";
 	protected static final String yellow = "\u001B[33m";
 	protected static final String white  = "\u001B[37m";
+	protected static HashMap<Integer,String> idAndNames = new HashMap<>();
 	
     public static void main(String[] args) throws IOException, InputMismatchException  { 
     	//Selecting port number from user to use => Plus tard par interface graphique
@@ -50,17 +51,12 @@ public class Server
                     // socket object to receive incoming client requests => "Passive" socket
                 	
                     sock = servSock.accept();
-                    
-                      
-                    System.out.println("A new client is connected via " +yellow+ sock.getLocalAddress()+reset);//To see which ip the client used to connect 
                       
                     // In and out streams => Information received (inputStream) and sent (outputStream) :
                     
                     DataInputStream in = new DataInputStream(sock.getInputStream()); 
                     DataOutputStream out = new DataOutputStream(sock.getOutputStream()); 
-                      
-                    System.out.println("Assigning new thread for this client"); 
-                    System.out.println("-----------------------------------------");	
+                    
                     // create a new thread object => Nouveau "processus" en quelque sorte
                     Thread t = new ClientHandler(sock, in, out); 
       
@@ -85,11 +81,11 @@ public class Server
     	 
     } 
 }
-//To "create" a new thread (process ?) either implement interface runnable OR inherite from the "Thread" class
+//To "create" a new thread (process ?) either implement interface Runnable OR inherite from the "Thread" class
 class ClientHandler extends Thread  
 { 
     DateFormat myDateFormat = new SimpleDateFormat("EEEE,dd-MMMM-YYYY");//Used for user to ask for Date
-    DateFormat myTimeFormat = new SimpleDateFormat("hh:mm:ss");//Used for user to ask for Time
+    DateFormat myTimeFormat = new SimpleDateFormat("HH:mm:ss");//Used for user to ask for Time
     final DataInputStream in; 
     final DataOutputStream out; 
     final Socket sock; 
@@ -119,12 +115,14 @@ class ClientHandler extends Thread
         String sendToClient;
         final String name = Thread.currentThread().getName();
         final long id = Thread.currentThread().getId(); 
-        Date date = new Date();//Creating Date object (used in Time and Date)
+        System.out.println("A new "+Server.purple+"client"+Server.blue+" \""+Thread.currentThread().getName()+"\""+Server.reset+" with id" +Server.red+" ("+Thread.currentThread().getId()+")"+Server.reset+" joined via " +Server.yellow+ sock.getLocalAddress().toString().replaceAll("/", "")+Server.reset);//To see which ip the client used to connect 
+        System.out.println("-----------------------------------------");
+        Server.idAndNames.put((int) id, name);
         while (true)  { 
             try { 
   
                 // Show the different possibilities (options) available
-                out.writeUTF("Welcome "+Server.blue+name+Server.reset+" your id is : "+Server.blue+id+Server.reset+"\n"+
+                out.writeUTF("Welcome "+Server.blue+"\""+name+"\""+Server.reset+" your id is : "+Server.red+id+Server.reset+"\n"+
                 		"What do you want? Options =>"+Server.purple+"[Date | Time | add5 | con(showNumOfClientConnected)]"+Server.reset+"\n"+ 
                             "Type "+Server.red+"'end'"+Server.reset+" to terminate connection.\n"
                 		+"---------------------------"); 
@@ -132,12 +130,13 @@ class ClientHandler extends Thread
                 // receive the answer from client 
                 receivedFromClient = in.readUTF(); 
                   
-                if(receivedFromClient.equals("end")) {  
-                    System.out.println("Client " +Server.yellow+ this.sock.getInetAddress() +Server.reset+ " sends end command..."); 
-                    System.out.println("Closing THIS connection."); 
+                if(receivedFromClient.equals("end")) {
+                	System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);
+                    System.out.println("Client "+Server.blue+"\""+name+"\""+Server.reset+" with id n°"+Server.blue+id+" "+Server.yellow+"(ip= "+this.sock.getInetAddress().toString().replaceAll("/", "") +")"+Server.reset+ " sends "+Server.red+"end command..."+Server.reset); 
+                    System.out.println("Bye bye "+Server.blue+"\""+name+"\""+Server.reset); 
                     this.sock.close();
                     numberOfClientsConnected--;
-                    System.out.println("Connection closed"); 
+                    System.out.println(Server.red+"Connection closed"+Server.reset); 
                     break; 
                 } 
                   
@@ -149,29 +148,33 @@ class ClientHandler extends Thread
                   
                     case "Date" : 
                     	//Shows the date
+                    	Date date = new Date();
                     	sendToClient = myDateFormat.format(date); 
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" "+sendToClient+Server.reset+"\n"+"-------------------");
-                        System.out.println(sendToClient);//Visualisation des donnees envoyes au client cote serveur
+                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         break; 
                           
                     case "Time" : 
                     	//Shows the Time
-                    	sendToClient = myTimeFormat.format(date); 
+                    	Date date2 = new Date();//Why here ? => Because Time changes ...
+                    	sendToClient = myTimeFormat.format(date2); 
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" "+sendToClient+Server.reset+"\n"+"-------------------"); 
-                        System.out.println(sendToClient);
+                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         break;
                         
                     case "add5" : 
                     	
                     	//Adds 5 to the "num" variable and displays its value
                         Server.num += 5;
-                        out.writeUTF(Server.yellow+"Server>"+Server.white+" Num = "+Server.num+Server.reset+"\n"+"-------------------"); 
+                        out.writeUTF(Server.yellow+"Server>"+Server.white+" Num = "+Server.num+Server.reset+"\n"+"-------------------");
+                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         System.out.println("Value of num : "+Server.num);
                         break; 
                         
                     case "con" : 
                     	//Show how many clients are connected to the server
-                        out.writeUTF(Server.yellow+"Server>"+Server.white+" Number of connections : "+numberOfClientsConnected+Server.reset+"\n"+"-------------------"); 
+                        out.writeUTF(Server.yellow+name+">"+Server.white+" Number of connections : "+numberOfClientsConnected+Server.reset+"\n"+"-------------------"); 
+                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         System.out.println("Num of connec : "+numberOfClientsConnected);
                         break;
                         
@@ -197,7 +200,7 @@ class ClientHandler extends Thread
     	try { 
             // closing resources 
             if (numberOfClientsConnected==0) {
-            	System.out.println("No more clients...ENDING Server!");
+            	System.out.println("No more clients..."+Server.red+"ENDING Server!"+Server.reset);
             	this.in.close(); 
                 this.out.close(); 
                 this.sock.close();
