@@ -23,6 +23,38 @@ public class Server  {
 	
 	protected static HashMap<Long,String> idAndNames = new HashMap<>();
 	
+<<<<<<< HEAD
+=======
+	
+	//----------------------------------
+	public static boolean checkNameInHashmapServer(Scanner scn,String userNameInput,HashMap<Long,String> map) {
+		System.out.println("enter a name");
+		userNameInput = scn.nextLine();
+		if (userNameInput.length()==0) {
+			while (userNameInput.length()==0) {
+				System.out.println("Re-enter a name");
+				userNameInput = scn.nextLine();
+				if (map.containsValue(userNameInput)) {
+					System.out.println(userNameInput+" is in hashMap");
+					return true;
+				}
+				else {
+					System.out.println(userNameInput+" is NOT in hashMap");
+					return false;
+				}
+			}
+		}
+		if (map.containsValue(userNameInput)) {
+			System.out.println(userNameInput+" is in hashMap");
+			return true;
+		}
+		else {
+			System.out.println(userNameInput+" is NOT in hashMap");
+			return false;
+		}
+	}
+	//--------------------------------------------
+>>>>>>> 6e17e1bf683c5c1903e19bc0782f467adc430dd8
 	
     public static void main(String[] args) throws IOException, InputMismatchException  { 
     	//Selecting port number from user to use => Plus tard par interface graphique
@@ -179,9 +211,21 @@ class ClientHandler extends Thread
                     case "name" : //What's my name ? => Answers that...
                     	System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);
                     	receivedFromClient = in.readUTF();//Receives new name from client
+<<<<<<< HEAD
                         userName = receivedFromClient;
                         Server.idAndNames.replace(id, userName);
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" Name changed to "+"\""+Server.red+userName+Server.white+"\""+Server.reset+"\n"+"-------------------"); 
+=======
+                    	
+                    	//Checker nom client si deja dans hashmap-----
+                    	
+                    	//---------------------------------------
+                    	
+                        userName = receivedFromClient;
+                        Server.idAndNames.replace(id, userName);
+                        out.writeUTF(Server.yellow+"Server>"+Server.white+" Name changed to "+"\""+Server.red+userName+Server.white+"\""+Server.reset+"\n"+"-------------------"); 
+                        
+>>>>>>> 6e17e1bf683c5c1903e19bc0782f467adc430dd8
                         System.out.println(Server.white+"Name changed to => "+Server.blue+userName+Server.reset);
                         break;
                     	
