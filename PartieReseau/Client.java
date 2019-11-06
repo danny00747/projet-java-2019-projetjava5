@@ -12,15 +12,29 @@ public class Client  {
 	protected static final String blue   = "\u001B[34m";
 	protected static final String reset  = "\u001B[0m";
 	protected static final String purple = "\u001B[35m";
+	private static String name;
+	
+	private static void checkNameClient(String name,Scanner scanner) {
+		if (name.length()<4 || name.length() >13) {
+			while (name.length()<4 || name.length() >13) {
+				System.out.println("Invalid input. Please re-enter a name (min 4 - max 12 :");
+				name = scanner.nextLine();
+			}
+		}
+	}
 	
     public static void main(String[] args) throws IOException  { 
         try { 
             Scanner scn = new Scanner(System.in); 
-              
+            // Retrieving client's name from user input :
+            System.out.println("What's your name ?");
+            name = scn.nextLine();
+            checkNameClient(name,scn);
+            
             // Retrieving port from user input :
             System.out.println(purple+"Port number ?"+reset);
     		int port = scn.nextInt();
-    		System.out.println(blue+"Client> "+purple+port);
+    		System.out.println(blue+name+"> "+purple+port);
     		
     		//Retrieving ip adress from user input :
             System.out.println(red+"IP address ? (nothing + enter = localhost)"+reset);
@@ -28,7 +42,7 @@ public class Client  {
     		ip = scn.nextLine();
     		if (ip.length()==0) {ip = "localhost";}
     		else if (ip.length()!=0) {System.out.println("ip entered");}
-    		System.out.println(blue+"Client> "+red+ip+reset);
+    		System.out.println(blue+name+"> "+red+ip+reset);
     		
       
             // establish the connection with the server with IP and Port from user input
@@ -40,7 +54,8 @@ public class Client  {
             // In and out streams => Information received (inputStream) and sent (outputStream) :
             DataInputStream in = new DataInputStream(sock.getInputStream()); 
             DataOutputStream out = new DataOutputStream(sock.getOutputStream()); 
-      
+            
+            out.writeUTF(name);//Sends client name to server
             
             //Infinite loop => "Until user input (you) types "end", read whatever
             while (true)  { 
@@ -48,15 +63,21 @@ public class Client  {
                 System.out.println(in.readUTF());//Reads the server's output (stream) 
                 String sendToServer = scn.nextLine();//Holds user input in a variale "tosend"
                 out.writeUTF(sendToServer);//Sends to server characters contained in String "tosend"
-                System.out.println(blue+"Client> "+red+sendToServer+reset);
+                System.out.println(blue+name+"> "+red+sendToServer+reset);
                  
                 // If the client (you) sends "end" => Close the connection
                 if(sendToServer.equals("end")) { 
-                    System.out.println(blue+"Client>"+reset+" Closing this connection...."); 
+                    System.out.println(blue+name+">"+reset+" Closing this connection...."); 
                     sock.close(); 
                     System.out.println(red+"Connection closed"+reset); 
                     break; 
-                } 
+                }
+                if(sendToServer.equals("name")) { 
+                	System.out.println("Enter new name (min 4 - max 12 :");
+                    name = scn.nextLine();
+                    checkNameClient(name,scn);
+                    out.writeUTF(name);
+                }
                   
                 // Displays the answer from the server (Date-Time-Number of connected clients,...etc)
                 String receivedFromServer = in.readUTF(); 
