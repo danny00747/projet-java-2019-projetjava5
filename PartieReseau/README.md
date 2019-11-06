@@ -2,3 +2,5 @@
 Ce dossier contient 4 fichiers **java** où :
 - <span style="color:blue">Client.java</span> et <span style="color:red">Server.java</span> sont utilisés sur des systèmes Unix (tester sur un *debian*) car il y a pleins de couleurs s'affichant dans le terminal linux. (Couleurs qui ne s'affichent pas dans le "command prompt" de windows.
 - Client2.java et Server2.java => Même contenu que les 2 autres fichiers mais **SANS couleurs** pour rendre compatible avec **TOUS les OS**.
+
+-<span style="color:blue">some *This is Blue italic.* text</span>
