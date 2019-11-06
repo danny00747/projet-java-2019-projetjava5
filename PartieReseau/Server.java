@@ -8,17 +8,9 @@ import java.util.*;
 /*
  * @Author Morgan Valentin
  * @Source code used to understand => https://www.geeksforgeeks.org/introducing-threads-socket-programming-java/
- * */
+*/
 
-public class Server  
-{ 	
-	/*Avec cette variable num (qui n'a l'air de rien) je test la modification par plusieurs thread
-	* Exemple : Client1 add5 (methode voir plus bas...) qui ajoute 5 a num et affiche ce nombre
-	* Avant le Client1 add5 3 fois qui donne 15 et Client2 qui fait add5 => affiche 5
-	* 	=> Variable propre a chaque thread.
-	* Maintenant, Si ClientA fait 3 fois add5 et ClientB fait add5 il verra 20 et non 5.
-	* (Bref, c'est pour que je comprennes mieux)
-	*/
+public class Server  { 	
 	protected static int num=0;//Used for user to add 5 (methode add5) to this num variable. (Testing purposes)
 	
 	//Colours on ouput => ONLY WORKS ON LINUX (maybe mac ?) NOT WINDOWS
@@ -28,7 +20,9 @@ public class Server
 	protected static final String purple = "\u001B[35m";
 	protected static final String yellow = "\u001B[33m";
 	protected static final String white  = "\u001B[37m";
-	protected static HashMap<Integer,String> idAndNames = new HashMap<>();
+	
+	protected static HashMap<Long,String> idAndNames = new HashMap<>();
+	
 	
     public static void main(String[] args) throws IOException, InputMismatchException  { 
     	//Selecting port number from user to use => Plus tard par interface graphique
@@ -49,11 +43,9 @@ public class Server
                   
                 try { 
                     // socket object to receive incoming client requests => "Passive" socket
-                	
                     sock = servSock.accept();
                       
                     // In and out streams => Information received (inputStream) and sent (outputStream) :
-                    
                     DataInputStream in = new DataInputStream(sock.getInputStream()); 
                     DataOutputStream out = new DataOutputStream(sock.getOutputStream()); 
                     
@@ -62,7 +54,6 @@ public class Server
       
                     // Demarre le processus t (gestion des clients) et mais en "pause" la suite des instructions du server.
                     t.start(); //Start method search the run() method from the Threat class heritence 
-                      
                 } 
                 catch (IOException e){ 
                 	servSock.close();
@@ -74,11 +65,7 @@ public class Server
     	}
     	catch(InputMismatchException a) {
         	System.out.println(Server.red+"FATAL ERROR :"+Server.reset+Server.purple+" IP and Port must be Integer"+Server.reset);
-        }
-    	catch(EOFException e) {
-    		System.out.println("Et on ne dit même pas au revoir ? Je vois...");
-    	}
-    	 
+        }	 
     } 
 }
 //To "create" a new thread (process ?) either implement interface Runnable OR inherite from the "Thread" class
@@ -90,7 +77,6 @@ class ClientHandler extends Thread
     final DataOutputStream out; 
     final Socket sock; 
     private static int numberOfClientsConnected=0;
-      
   
     // Constructor 
     public ClientHandler(Socket sock, DataInputStream in, DataOutputStream out)  
@@ -115,15 +101,27 @@ class ClientHandler extends Thread
         String sendToClient;
         final String name = Thread.currentThread().getName();
         final long id = Thread.currentThread().getId(); 
-        System.out.println("A new "+Server.purple+"client"+Server.blue+" \""+Thread.currentThread().getName()+"\""+Server.reset+" with id" +Server.red+" ("+Thread.currentThread().getId()+")"+Server.reset+" joined via " +Server.yellow+ sock.getLocalAddress().toString().replaceAll("/", "")+Server.reset);//To see which ip the client used to connect 
+        Server.idAndNames.put(id, name);//Add id and thread name to hashMap
+        String userName = Server.idAndNames.get(id);//userName = valeur de la cle id (nom du process ex: thread-0)
+        
+        //---------------------
+        //Choppe le nom du client (que le client envoie au serveur)
+        try {       
+        	userName = in.readUTF();//Stocke le nom du client dans le hashMap a la cle (id du Thread) (valeur=>userName)
+        	
+        } catch (IOException e) { 
+            System.out.println("Erreur");
+        }
+        System.out.println("A new "+Server.purple+"client"+Server.blue+" \""+userName+"\""+Server.reset+" with id" +Server.red+" ("+id+")"+Server.reset+" joined via " +Server.yellow+ sock.getLocalAddress().toString().replaceAll("/", "")+Server.reset);//To see which ip the client used to connect 
         System.out.println("-----------------------------------------");
-        Server.idAndNames.put((int) id, name);
+        //--------------------
+        
         while (true)  { 
             try { 
   
                 // Show the different possibilities (options) available
-                out.writeUTF("Welcome "+Server.blue+"\""+name+"\""+Server.reset+" your id is : "+Server.red+id+Server.reset+"\n"+
-                		"What do you want? Options =>"+Server.purple+"[Date | Time | add5 | con(showNumOfClientConnected)]"+Server.reset+"\n"+ 
+                out.writeUTF("Welcome "+Server.blue+"\""+userName+"\""+Server.reset+" your id is : "+Server.red+id+Server.reset+"\n"+
+                		"What do you want? Options =>"+Server.purple+"[Date | Time | add5 | name | con(showNumOfClientConnected)]"+Server.reset+"\n"+ 
                             "Type "+Server.red+"'end'"+Server.reset+" to terminate connection.\n"
                 		+"---------------------------"); 
                   
@@ -131,9 +129,9 @@ class ClientHandler extends Thread
                 receivedFromClient = in.readUTF(); 
                   
                 if(receivedFromClient.equals("end")) {
-                	System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);
-                    System.out.println("Client "+Server.blue+"\""+name+"\""+Server.reset+" with id n°"+Server.blue+id+" "+Server.yellow+"(ip= "+this.sock.getInetAddress().toString().replaceAll("/", "") +")"+Server.reset+ " sends "+Server.red+"end command..."+Server.reset); 
-                    System.out.println("Bye bye "+Server.blue+"\""+name+"\""+Server.reset); 
+                	System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);
+                    System.out.println("Client "+Server.blue+"\""+userName+"\""+Server.reset+" with id n°"+Server.blue+id+" "+Server.yellow+"(ip= "+this.sock.getInetAddress().toString().replaceAll("/", "") +")"+Server.reset+ " sends "+Server.red+"end command..."+Server.reset); 
+                    System.out.println("Bye bye "+Server.blue+"\""+userName+"\""+Server.reset); 
                     this.sock.close();
                     numberOfClientsConnected--;
                     System.out.println(Server.red+"Connection closed"+Server.reset); 
@@ -151,7 +149,7 @@ class ClientHandler extends Thread
                     	Date date = new Date();
                     	sendToClient = myDateFormat.format(date); 
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" "+sendToClient+Server.reset+"\n"+"-------------------");
-                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
+                        System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         break; 
                           
                     case "Time" : 
@@ -159,7 +157,7 @@ class ClientHandler extends Thread
                     	Date date2 = new Date();//Why here ? => Because Time changes ...
                     	sendToClient = myTimeFormat.format(date2); 
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" "+sendToClient+Server.reset+"\n"+"-------------------"); 
-                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
+                        System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         break;
                         
                     case "add5" : 
@@ -167,22 +165,26 @@ class ClientHandler extends Thread
                     	//Adds 5 to the "num" variable and displays its value
                         Server.num += 5;
                         out.writeUTF(Server.yellow+"Server>"+Server.white+" Num = "+Server.num+Server.reset+"\n"+"-------------------");
-                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
+                        System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         System.out.println("Value of num : "+Server.num);
                         break; 
                         
                     case "con" : 
                     	//Show how many clients are connected to the server
-                        out.writeUTF(Server.yellow+name+">"+Server.white+" Number of connections : "+numberOfClientsConnected+Server.reset+"\n"+"-------------------"); 
-                        System.out.println(Server.blue+name+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
+                        out.writeUTF(Server.yellow+userName+">"+Server.white+" Number of connections : "+numberOfClientsConnected+Server.reset+"\n"+"-------------------"); 
+                        System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);//Visualisation des donnees demande par le client
                         System.out.println("Num of connec : "+numberOfClientsConnected);
                         break;
                         
-                    case "" :
-                    	out.writeUTF("");
-                    	break;
+                    case "name" : //What's my name ? => Answers that...
+                    	System.out.println(Server.blue+userName+"> "+Server.red+receivedFromClient+Server.reset);
+                    	receivedFromClient = in.readUTF();//Receives new name from client
+                        userName = receivedFromClient;
+                        Server.idAndNames.replace(id, userName);
+                        out.writeUTF(Server.yellow+"Server>"+Server.white+" Name changed to "+"\""+Server.red+userName+Server.white+"\""+Server.reset+"\n"+"-------------------"); 
+                        System.out.println(Server.white+"Name changed to => "+Server.blue+userName+Server.reset);
+                        break;
                     	
-                          
                     default: 
                         out.writeUTF("Invalid input");
                         break; 
