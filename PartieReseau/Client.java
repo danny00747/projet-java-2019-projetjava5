@@ -18,11 +18,7 @@ public class Client  {
 	protected static final String purple = "\u001B[35m";
 	private static String name;
 	
-<<<<<<< HEAD
 	private static void checkNameClient(String name,Scanner scanner) {//Checks if name (input from user) is between 4 and 12 chracters in length
-=======
-	private static void checkNameClient(String name,Scanner scanner) {
->>>>>>> 6e17e1bf683c5c1903e19bc0782f467adc430dd8
 		if (name.length()<4 || name.length() >13) {
 			while (name.length()<4 || name.length() >13) {
 				System.out.println("Invalid input. Please re-enter a name (min 4 - max 12 :");
