@@ -14,9 +14,11 @@ Ce dossier contient 4 fichiers **java** où :
 
 ## Petite Démo :
 - Version **avec couleurs** (sous ***Linux***) :
+  :point_right: Juste besoin d'exécuter les fichiers java
 
 ![](img/linuxLinux.gif)
 
 - Version **Sans couleurs** (sous ***Windows***) => Compatible avec **TOUS les OS** :
+  :point_right: On doit d'abord indiquer au système où se l'intallation de java.
 
 ![](img/winWin.gif)
