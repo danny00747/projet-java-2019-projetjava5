@@ -72,7 +72,7 @@ Le joueur dispose de 6 unités (3 <span style="color: brown">bâtiments</span> e
 
 
 ## Use Case :
-
+![com_serv-pc](img/Communication_Server-PC.png) 
 
 Le serveur doit pouvoir :
 
