@@ -1,2 +1,0 @@
-module BattleGround_cmd {
-}
