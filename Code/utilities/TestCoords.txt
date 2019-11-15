@@ -1,0 +1,6 @@
+A:      B3 C6
+RT:     F6 H7
+HQ:     K3 L4
+RG:     M8 M13
+MM:     D11 E12
+T:      H2 H3
