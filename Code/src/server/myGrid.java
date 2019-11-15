@@ -58,9 +58,4 @@ public class myGrid extends Grid {
         return gridCells.get(coord);
     }
 
-    // for debugging only - do nut run if not for debugging
-    public static void main(String[] args) {
-        myGrid test = new myGrid();
-    }
-
 }

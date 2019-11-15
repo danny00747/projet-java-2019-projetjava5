@@ -4,18 +4,13 @@ package server;
  */
 import java.util.HashMap;
 /*
-* Cette classe permet de récupérer toute les informations concernant les différentes unité disponible
+* Cette classe permet de rï¿½cupï¿½rer toute les informations concernant les diffï¿½rentes unitï¿½ disponible
 * durant la partie.
 * 
-* Elle sert également à vérifier si une unité ou case à été détruite 
+* Elle sert ï¿½galement ï¿½ vï¿½rifier si une unitï¿½ ou case ï¿½ ï¿½tï¿½ dï¿½truite 
 */
 public class Unit {
-    /**
-     * @param name {String} - Le nom de l'unité
-     * @param size {int} -La taille de l'unité
-     * @param coordState {String,Boolean}- case toujour en vie true = oui | false = non
-     * @param isAlive {Boolean} - unité envie true = oui | false = non
-     */
+
     private String name;
     private int size;
     private boolean isAlive;                     
@@ -24,10 +19,10 @@ public class Unit {
     /**
      * description 
      * 
-     * @param name reprend le nom de l'unité
+     * @param name reprend le nom de l'unitï¿½
      * @param size reprend la taille
      * @param coordState
-     * @param isAlive valeur par défaut "true"
+     * @param isAlive valeur par dï¿½faut "true"
      */
     protected Unit(String name, int size) {
         this.name = name;
@@ -37,9 +32,9 @@ public class Unit {
     }
 
     /**
-     * desciption : Initier toutes les cases à true
+     * desciption : Initier toutes les cases ï¿½ true
      * 
-     * @param coords {String} - un tabelau des coordonnées
+     * @param coords {String} - un tabelau des coordonnï¿½es
      * 
      */    
     protected void initCoordState(String [] coords) {
@@ -48,15 +43,15 @@ public class Unit {
         }
     }
     /**
-     * Permet de récupérer le nom de l'unité fournit par le joueur
-     * @return nom de l'unité
+     * Permet de rï¿½cupï¿½rer le nom de l'unitï¿½ fournit par le joueur
+     * @return nom de l'unitï¿½
      */
     protected String getName() {
         return name;
     }
     /**
-     * Permet de récupérer la taille d'une unité
-     * @return taille de l'unité
+     * Permet de rï¿½cupï¿½rer la taille d'une unitï¿½
+     * @return taille de l'unitï¿½
      */
     protected int getSize() {
         return size;
@@ -65,8 +60,8 @@ public class Unit {
     	return coordState.get(key);
     }
     /**
-     * Permet de changer l'état d'une case d'une unité et de vérifier qu'elle case sont toujour en vie
-     * @param key {String} - La case qui a été cibler 
+     * Permet de changer l'ï¿½tat d'une case d'une unitï¿½ et de vï¿½rifier qu'elle case sont toujour en vie
+     * @param key {String} - La case qui a ï¿½tï¿½ cibler 
      */  
     protected void setCoordState(String key) {
     	coordState.replace(key, false);
@@ -79,8 +74,8 @@ public class Unit {
         }
     }
     /**
-     * Permet d'indiqué si  l'unité est toujours en vie (jouable)
-     * @return l'état de la troupe
+     * Permet d'indiquï¿½ si  l'unitï¿½ est toujours en vie (jouable)
+     * @return l'ï¿½tat de la troupe
      */
     protected boolean getIsAlive(){
     	return isAlive;

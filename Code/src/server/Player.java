@@ -176,12 +176,12 @@ public class Player {
         // TODO
     }
 
+    // only for debugging !! 
     public static void main(String[] args) {
         Player p = new Player("Martin");
         p.placeUnits();
         p.shoot("S", "H3", false);
         p.shoot("S", "J10", false);
-        System.out.println(p.Airport.coordState);
     }
 
 }
