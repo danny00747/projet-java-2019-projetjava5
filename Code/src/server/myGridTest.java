@@ -9,9 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 
-/**
- * 
- */
 class myGridTest {
 
     private myGrid testmyGrid = new myGrid();
@@ -19,7 +16,7 @@ class myGridTest {
     private Unit testUnit_2 = new Unit("testUnit_2",8);
 
 	/**
-	 * Test method for the getgridCell() method from the myGrid class.
+	 * Test method for the getGridCell() method from the myGrid class.
 	 * 
      * If no units have been placed -> the expected result should be = null
      * if some units have been places, 
@@ -52,7 +49,7 @@ class myGridTest {
         
 
 	/**
-	 * Test method for the setgridCell() method from the myGrid class.
+	 * Test method for the setGridCell() method from the myGrid class.
 	 */
     @Test
     void test_setGrdiCell() {
