@@ -14,7 +14,7 @@ public class Unit {
     private String name;
     private int size;
     private boolean isAlive;                     
-    private HashMap<String, Boolean> coordState;
+    protected HashMap<String, Boolean> coordState;
 
     /**
      * description 

@@ -14,7 +14,9 @@ public class Player extends Thread {
     private myGrid myGrid;
     private enemyGrid enemyGrid;
     private Unit Airport, RadarTower, HeadQuarter, RailwayGun, MMRL, Tank;
-    protected Unit[] units = new Unit[6];
+    private Unit[] units = new Unit[6];
+    private String myKey = "";
+    protected boolean isReady = false;
     protected boolean isMyTurn = false;
 
 
@@ -61,6 +63,15 @@ public class Player extends Thread {
         this.in = in; 
         this.out = out;
         //testConnection();//Tests if there's 0 client OR More than 2 connected => If so Closes ressources and Exit program. //TODO
+
+        if(Server.Players.get("P1") == null){
+            myKey = "P1";
+            Server.Players.replace("P1",this);
+        }
+        else{
+            myKey = "P2";
+            Server.Players.replace("P2",this);
+        }
         
     } 
 
@@ -186,17 +197,157 @@ public class Player extends Thread {
      * //TODO
      */
     protected void placeUnits() {
-        unitPlacer(Airport);
-        unitPlacer(RadarTower);
-        unitPlacer(HeadQuarter);
-        unitPlacer(RailwayGun);
-        unitPlacer(MMRL);
+        //unitPlacer(Airport);
+        //unitPlacer(RadarTower);
+        //unitPlacer(HeadQuarter); //TODO
+        //unitPlacer(RailwayGun);
+        //unitPlacer(MMRL);
         unitPlacer(Tank);
         sendToClient("Q?");
         sendToClient("All units are placed, press any key to start playing.\n");
         getFormClient();
         sendToClient("Rem");
         sendToClient("2");
+        isReady = true;
+    }
+
+    /**
+     * Method that returns the reference to the other player 
+     * 
+     * @return {Player} - The object Player of the other client 
+     */
+    protected Player otherPlayer(){
+        if(myKey.equals("P1")){
+            return Server.Players.get("P2");
+        }
+        else{
+            return Server.Players.get("P1");
+        }
+    }
+
+    /**
+     * //TODO
+     * @param shotCoord
+     */
+    protected void sendHit(String shotCoord){
+        sendToClient("Rem"); sendToClient("2");
+        sendToClient("Hit");
+        sendToClient(shotCoord);
+        otherPlayer().sendToClient("myHit");
+        otherPlayer().sendToClient(shotCoord);
+    }
+
+    /**
+     * //TODO
+     * @param shotCoord
+     */
+    protected void sendNoHit(String shotCoord){
+        sendToClient("Rem"); sendToClient("2");
+        sendToClient("noHit");
+        sendToClient(shotCoord);
+        otherPlayer().sendToClient("myNoHit");
+        otherPlayer().sendToClient(shotCoord);
+    }
+
+    /**
+     * //TODO
+     * @param shotCoord
+     */
+    protected void sendDestroyed(String shotCoord){
+        sendToClient("Rem"); sendToClient("2");
+        sendToClient("Destroyed");
+        sendToClient(shotCoord);
+        otherPlayer().sendToClient("myDestroyed");
+        otherPlayer().sendToClient(shotCoord);
+    }
+
+    protected String getAvailableShotTypes(){
+        String availableShotTypes = "S ";
+        if(Airport.getIsAlive()){
+            availableShotTypes += "- A ";
+        }
+        if(RadarTower.getIsAlive()){
+            availableShotTypes += "- D ";
+        }
+        if(RailwayGun.getIsAlive()){
+            availableShotTypes += "- B ";
+        }
+        if(MMRL.getIsAlive()){
+            availableShotTypes += "- R ";
+        }
+        return availableShotTypes;
+    }
+    /**
+     * //TODO
+     * 
+     */
+    protected void shoot() {
+        //TODO -> check for user input errors etc.
+        String shotType, shotCoord;
+
+        sendToClient("Q?");
+        sendToClient("What type of shot do you want to use?     Available: "+ getAvailableShotTypes() +"\n"+
+        "S : Singleshot; A : Airstrike; D : Radar discovery; B : Bigshot; R : Rocketstrike\n");
+        shotType = getFormClient();
+        //check userinput
+        switch (shotType) {
+            case "S":
+                sendToClient("Rem"); sendToClient("3");
+                sendToClient("Q?");
+                sendToClient("Enter the coordinate of the shot. Ex: H4 \n");
+                shotCoord = getFormClient();
+                //TODO - check if coord as already been shot 
+                if(otherPlayer().myGrid.getGridCell(shotCoord) != null){ //hit
+                    Unit enemyUnit = otherPlayer().myGrid.getGridCell(shotCoord);
+                    enemyUnit.setCoordState(shotCoord);
+                    enemyGrid.setGridCell(shotCoord, 1);
+                    if(enemyUnit.getIsAlive()){
+                        sendHit(shotCoord);
+                    }
+                    else{
+                        for ( String key : enemyUnit.coordState.keySet() ) {
+                            sendDestroyed(key);
+                        }
+                    }
+                }
+                else{ //no hit
+                    enemyGrid.setGridCell(shotCoord, -1);
+                    sendNoHit(shotCoord);
+                }
+                break;
+
+            case "A":
+                break;
+
+            case "D":
+                break;
+
+            case "B":
+                break;
+
+            case "R":
+                break;
+
+            default:
+
+        }
+    }
+
+
+    /**
+     * //TODO
+     */
+    protected void play(){
+        while(true){
+            if(isMyTurn){
+                shoot();
+                this.isMyTurn = false;
+                otherPlayer().isMyTurn = true;
+            }
+            else{
+                try{Thread.sleep(100);}catch(InterruptedException ex){}
+            }
+        }
     }
 
     /**
@@ -210,6 +361,11 @@ public class Player extends Thread {
         getClientInfo();
         sendToClient("displayGrid");
         placeUnits();
-        
+        sendToClient("Waiting for other player\n");
+        while(!Server.allPlayerConnected){
+            try{Thread.sleep(100);}catch(InterruptedException ex){}
+        };
+        sendToClient("Rem");sendToClient("1");
+        play();
     }
 }

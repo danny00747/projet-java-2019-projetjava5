@@ -98,7 +98,7 @@ public class CmdGridDisplay {
 				str = String.format("%c[43m%c[31m", escCode, escCode) + String.format(" %-2c", 'Ⓧ');
 				break;
 			case "noHit":
-				str = String.format("%c[34m", escCode) + String.format(" %-2c", 'Ⓧ');
+				str = String.format("%c[44m", escCode) + String.format(" %-2c", 'Ⓧ');
 				break;
 			case "Destroyed":
 				str = String.format("%c[41m%c[33m", escCode, escCode) + String.format(" %-2c", 'Ⓧ');
@@ -134,6 +134,15 @@ public class CmdGridDisplay {
             System.out.print(String.format("%c[1A", escCode)); // Move Up 1 line
             System.out.print(String.format("%c[2K", escCode)); // clear the current line
         }
+	}
+	
+	/**
+     * 
+     */
+    protected void clearDown() {
+		System.out.print(String.format("%c8", escCode)); // move to saved cursor position
+		System.out.print(String.format("%c[J", escCode));
+		System.out.print(String.format("%c8", escCode));
     }
 
 }

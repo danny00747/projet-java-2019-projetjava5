@@ -147,7 +147,6 @@ public class Client  {
                     break;
                     
                 case "Q?": //Server ask a question
-                    
                     System.out.print(getFormServer()); //print the question 
                     strToServer = scn.nextLine();
                     sendToServer(strToServer);
@@ -156,6 +155,36 @@ public class Client  {
                 case "insertUnit":
                     strFromServer = getFormServer();
                     gridDisplay.insertInGrid("Unit", strFromServer, false);
+                    break;
+                
+                case "Hit": 
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("Hit", strFromServer, true);
+                    break;
+
+                case "noHit":
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("noHit", strFromServer, true);
+                    break;
+                
+                case "Destroyed":
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("Destroyed", strFromServer, true);
+                    break;
+                
+                case "myDestroyed":
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("Destroyed", strFromServer, false);
+                    break;
+                
+                case "myHit": 
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("Hit", strFromServer, false);
+                    break;
+
+                case "myNoHit":
+                    strFromServer = getFormServer();
+                    gridDisplay.insertInGrid("noHit", strFromServer, false);
                     break;
 
                 case "Rem": //remove lines
