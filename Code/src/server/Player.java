@@ -1,32 +1,47 @@
-/**
- * @author Martin Michotte
- * @date 12/11/2019
- */
-
 package server;
 
 import java.io.*;
-import java.util.Arrays;
+import java.net.*;
+import java.text.*;
+import java.util.*;
 
+/**
+ * //TODO
+ */
+public class Player extends Thread {
 
-public class Player {
-
-    private CMD cmd;
-    private CMD_grid cmdGrid = new CMD_grid();
-    private String name;
+    String userName;
     private myGrid myGrid;
     private enemyGrid enemyGrid;
     private Unit Airport, RadarTower, HeadQuarter, RailwayGun, MMRL, Tank;
+    protected Unit[] units = new Unit[6];
+    protected boolean isMyTurn = false;
+
+
+    private DataInputStream in; 
+    private DataOutputStream out; 
+    private Socket sock; 
+    private static int numberOfClientsConnected=0;
+
+    //Colours on ouput => ONLY WORKS ON LINUX (maybe mac ?) NOT WINDOWS
+	protected static final String red    = "\u001B[31m";
+	protected static final String blue   = "\u001B[34m";
+	protected static final String reset  = "\u001B[0m";
+	protected static final String purple = "\u001B[35m";
+	protected static final String yellow = "\u001B[33m";
+	protected static final String white  = "\u001B[37m";
 
     /**
      * Constructor
+     * //TODO
+     * @param sock
+     * @param in
+     * @param out
      */
-    protected Player(String name) {
-        this.name = name;
-
+    public Player(Socket sock, DataInputStream in, DataOutputStream out)  
+    { 
         myGrid = new myGrid();
         enemyGrid = new enemyGrid();
-        cmdGrid.displayGrid();
 
         Airport = new Unit("Airport (2x4)", 8);
         RadarTower = new Unit("Radar Tower (2x3)", 6);
@@ -34,11 +49,62 @@ public class Player {
         RailwayGun = new Unit("Railway Gun (1x6)", 6);
         MMRL = new Unit("MMRL (2x2)", 4);
         Tank = new Unit("Tank (1x2)", 2);
+        units[0] = Airport;
+        units[1] = RadarTower;
+        units[2] = HeadQuarter;
+        units[3] = RailwayGun;
+        units[4] = MMRL;
+        units[5] = Tank;
 
-        cmd = new CMD();
+        this.sock = sock;
+        numberOfClientsConnected++;
+        this.in = in; 
+        this.out = out;
+        //testConnection();//Tests if there's 0 client OR More than 2 connected => If so Closes ressources and Exit program. //TODO
+        
+    } 
+
+    /**
+     * Method that takes a string and tries to send it to the client.
+     * 
+     * @param str {String} - A String to send to the client 
+     */
+    private void sendToClient(String str){
+        try{
+            out.writeUTF(str);
+        }
+        catch(IOException e){
+            //TODO
+        }
     }
 
     /**
+     * Method that waits for string from the client and returns it when received. 
+     * 
+     * @return a string received from the server
+     */
+    private String getFormClient(){
+        try{
+            return in.readUTF();
+        }
+        catch(IOException e){
+            //TODO
+        }
+        return "";
+    }
+
+    /**
+     * 
+     */
+    private void getClientInfo(){
+        long id = Thread.currentThread().getId(); 
+
+        userName = getFormClient();
+        System.out.println("A new "+Server.purple+"client"+Server.blue+" \""+userName+"\""+Server.reset+" with id" +Server.red+" ("+id+")"+Server.reset+" joined via " +Server.yellow+ sock.getLocalAddress().toString().replaceAll("/", "")+Server.reset);//To see which ip the client used to connect 
+        System.out.println("-----------------------------------------");
+    }
+
+     /**
      * Function that asks the player to place his unit on the grid and saves it.
      * 
      * @param unit {Unit} - //TODO
@@ -51,11 +117,11 @@ public class Player {
         int numberOfRows, numberOfCols;
         int failCount = 0;
 
-        cmd.println("\nWhere do you want to place the " + unit.getName()
-                + "? Enter top-left and bottom-right coordinates separated by a whitespace.");
+        sendToClient("Q?");
+        sendToClient("\nWhere do you want to place the " + unit.getName()+ "? Enter top-left and bottom-right coordinates separated by a whitespace.\n");
         unitCoords = new String[unit.getSize()];
         while (!isPlaced) {
-            userInput = cmd.getUserInput();
+            userInput = getFormClient();
             try {
                 coord1 = userInput.split(" ")[0];
                 coord2 = userInput.split(" ")[1];
@@ -83,26 +149,34 @@ public class Player {
 
                     if (isPlaced) {
                         unit.initCoordState(unitCoords);
-                        cmd.removeLines(3);
+                        sendToClient("Rem");
+                        sendToClient("3");
                         for (int i = 0; i < unitCoords.length; i++) {
                             myGrid.setGridCell(unitCoords[i], unit);
-                            cmdGrid.insertInGrid("Unit", unitCoords[i], false);
+                            sendToClient("insertUnit");
+                            sendToClient(unitCoords[i]);
                         }
                     } else {
-                        cmd.removeLines(failCount + 1);
-                        cmd.println("Input not valid. Units can not overlap eachother. Please enter valid input");
+                        sendToClient("Rem");
+                        sendToClient(""+(failCount + 1));
+                        sendToClient("Q?");
+                        sendToClient("Input not valid. Units can not overlap eachother. Please enter valid input\n");
                         failCount = 1;
                     }
                 } else {
                     isPlaced = false;
-                    cmd.removeLines(failCount + 1);
-                    cmd.println("Input not valid. Please enter valid input");
+                    sendToClient("Rem");
+                    sendToClient(""+(failCount + 1));
+                    sendToClient("Q?");
+                    sendToClient("Input not valid. Please enter valid input\n");
                     failCount = 1;
                 }
             } catch (Exception e) {
                 isPlaced = false;
-                cmd.removeLines(failCount + 1);
-                cmd.println("Input not valid. Please enter valid input");
+                sendToClient("Rem");
+                sendToClient(""+(failCount + 1));
+                sendToClient("Q?");
+                sendToClient("Input not valid. Please enter valid input\n");
                 failCount = 1;
             }
         }
@@ -118,70 +192,24 @@ public class Player {
         unitPlacer(RailwayGun);
         unitPlacer(MMRL);
         unitPlacer(Tank);
-        cmd.println("All units are placed, press any key to start playing.");
-        cmd.getUserInput();
-        cmd.removeLines(2);
-    }
-
-    /**
-     * //TODO
-     * 
-     * @param shotType   {String} - the type of the shot : Single-shot -> "S",
-     *                   Airstrike -> "A", Radar Discovery -> "D", Big Shot -> "B",
-     *                   Rocketstrike -> "R"
-     * @param coord      {String} - the coordinate of the shot. If special shot, the
-     *                   coordinate of the center of the shot. ex: "H4"
-     * @param isOutGoing {boolean} - tells if the shot is outgoing or incomming
-     */
-    protected void shoot(String shotType, String coord, boolean isOutGoing) {
-        // TODO - check user input for errors : not in range, not a correct string, ...
-        // check if bonus is available
-        switch (shotType) {
-        // TODO - add send information to other player
-        case "S":
-            if (isOutGoing) {
-                // TODO
-            } else {
-                if (myGrid.getGridCell(coord) != null) {
-                    cmdGrid.insertInGrid("Hit", coord, isOutGoing);
-                    //TODO add info into unit
-                } else {
-                    cmdGrid.insertInGrid("noHit", coord, isOutGoing);
-                }
-
-            }
-            break;
-
-        case "A":
-            break;
-
-        case "D":
-            break;
-
-        case "B":
-            break;
-
-        case "R":
-            break;
-
-        default:
-
-        }
+        sendToClient("Q?");
+        sendToClient("All units are placed, press any key to start playing.\n");
+        getFormClient();
+        sendToClient("Rem");
+        sendToClient("2");
     }
 
     /**
      * //TODO
      */
-    protected void quitGame() {
-        // TODO
-    }
+    @Override
+    public void run()  { 
+        String strFromClient ="";
+        String strToClient ="";
 
-    // only for debugging !! 
-    public static void main(String[] args) {
-        Player p = new Player("Martin");
-        p.placeUnits();
-        p.shoot("S", "H3", false);
-        p.shoot("S", "J10", false);
+        getClientInfo();
+        sendToClient("displayGrid");
+        placeUnits();
+        
     }
-
 }
