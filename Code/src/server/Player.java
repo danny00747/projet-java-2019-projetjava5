@@ -105,7 +105,7 @@ public class Player extends Thread {
     }
 
     /**
-     * 
+     * //TODO
      */
     private void getClientInfo(){
         long id = Thread.currentThread().getId(); 
@@ -199,7 +199,7 @@ public class Player extends Thread {
     protected void placeUnits() {
         //unitPlacer(Airport);
         //unitPlacer(RadarTower);
-        //unitPlacer(HeadQuarter); //TODO
+        //unitPlacer(HeadQuarter); //TODO - REMOVE Comments -> TESTING PURPOSE
         //unitPlacer(RailwayGun);
         //unitPlacer(MMRL);
         unitPlacer(Tank);
@@ -230,7 +230,6 @@ public class Player extends Thread {
      * @param shotCoord
      */
     protected void sendHit(String shotCoord){
-        sendToClient("Rem"); sendToClient("2");
         sendToClient("Hit");
         sendToClient(shotCoord);
         otherPlayer().sendToClient("myHit");
@@ -242,7 +241,6 @@ public class Player extends Thread {
      * @param shotCoord
      */
     protected void sendNoHit(String shotCoord){
-        sendToClient("Rem"); sendToClient("2");
         sendToClient("noHit");
         sendToClient(shotCoord);
         otherPlayer().sendToClient("myNoHit");
@@ -254,7 +252,6 @@ public class Player extends Thread {
      * @param shotCoord
      */
     protected void sendDestroyed(String shotCoord){
-        sendToClient("Rem"); sendToClient("2");
         sendToClient("Destroyed");
         sendToClient(shotCoord);
         otherPlayer().sendToClient("myDestroyed");
@@ -277,6 +274,39 @@ public class Player extends Thread {
         }
         return availableShotTypes;
     }
+
+    protected void checkForHit(String shotCoord){
+        //TODO - check if coord as already been shot 
+        if(otherPlayer().myGrid.getGridCell(shotCoord) != null){ //hit
+            Unit enemyUnit = otherPlayer().myGrid.getGridCell(shotCoord);
+            enemyUnit.setCoordState(shotCoord);
+            enemyGrid.setGridCell(shotCoord, 1);
+            if(enemyUnit.getIsAlive()){
+                sendHit(shotCoord);
+            }
+            else{
+                for ( String key : enemyUnit.coordState.keySet() ) {
+                    sendDestroyed(key);
+                }
+            }
+        }
+        else{ //no hit
+            enemyGrid.setGridCell(shotCoord, -1);
+            sendNoHit(shotCoord);
+        }
+    }
+
+    protected String askForCoord(String question,int linesToDel){
+        sendToClient("Rem"); sendToClient(Integer.toString(linesToDel));
+        sendToClient("Q?");
+        sendToClient(question);
+        String shotCoord = getFormClient();
+        sendToClient("Rem"); sendToClient("2");
+        return shotCoord;
+    }
+
+    private final int NUMBER_OF_ROCKETS = 5; //TODO - a déplacer
+
     /**
      * //TODO
      * 
@@ -284,6 +314,7 @@ public class Player extends Thread {
     protected void shoot() {
         //TODO -> check for user input errors etc.
         String shotType, shotCoord;
+        int[] centerCoord;
 
         sendToClient("Q?");
         sendToClient("What type of shot do you want to use?     Available: "+ getAvailableShotTypes() +"\n"+
@@ -292,47 +323,80 @@ public class Player extends Thread {
         //check userinput
         switch (shotType) {
             case "S":
-                sendToClient("Rem"); sendToClient("3");
-                sendToClient("Q?");
-                sendToClient("Enter the coordinate of the shot. Ex: H4 \n");
-                shotCoord = getFormClient();
-                //TODO - check if coord as already been shot 
-                if(otherPlayer().myGrid.getGridCell(shotCoord) != null){ //hit
-                    Unit enemyUnit = otherPlayer().myGrid.getGridCell(shotCoord);
-                    enemyUnit.setCoordState(shotCoord);
-                    enemyGrid.setGridCell(shotCoord, 1);
-                    if(enemyUnit.getIsAlive()){
-                        sendHit(shotCoord);
-                    }
-                    else{
-                        for ( String key : enemyUnit.coordState.keySet() ) {
-                            sendDestroyed(key);
-                        }
-                    }
-                }
-                else{ //no hit
-                    enemyGrid.setGridCell(shotCoord, -1);
-                    sendNoHit(shotCoord);
-                }
+                checkForHit(askForCoord("Enter the coordinate of the shot. Ex: H4 \n",3));
                 break;
 
             case "A":
+                centerCoord = myGrid.getCoordIndex(askForCoord("Enter the coordinate of the center of the airstrike. Ex: H4 \n",3));
+                String direction = askForCoord("Enter the direction of the airstrike. H : Horizontal; V : Vertical \n",0);
+                for(int i=-3;i<3;i++){
+                    if(direction.equals("H")){
+                        shotCoord = myGrid.rowNames[centerCoord[0]]+myGrid.colNames[centerCoord[1]+i];
+                        checkForHit(shotCoord);
+                        try{Thread.sleep(150);}catch(InterruptedException ex){}
+                    }
+                    else if(direction.equals("V")){
+                        shotCoord = myGrid.rowNames[centerCoord[0]+i]+myGrid.colNames[centerCoord[1]];
+                        checkForHit(shotCoord);
+                        try{Thread.sleep(150);}catch(InterruptedException ex){}
+                    }
+                    else{
+                        //TODO
+                    }
+                }
                 break;
 
             case "D":
+                //TODO
                 break;
 
             case "B":
+                centerCoord = myGrid.getCoordIndex(askForCoord("Enter the coordinate of the central shot. Ex: H4 \n",3));
+                //TODO - Check for out of range
+                for(int i =-1; i<2;i++){
+                    for(int j =-1; j<2;j++){
+                        shotCoord = myGrid.rowNames[centerCoord[0]+i]+myGrid.colNames[centerCoord[1]+j];
+                        checkForHit(shotCoord);
+                    }
+                }
                 break;
 
             case "R":
+                sendToClient("Rem"); sendToClient("3");
+                for(int i = 0; i<NUMBER_OF_ROCKETS;i++){ 
+                    shotCoord = myGrid.rowNames[(int)(Math.random()*(myGrid.rowNames.length-1))]+myGrid.colNames[(int)(Math.random()*(myGrid.rowNames.length-1))];
+                    checkForHit(shotCoord);
+                    try{Thread.sleep(500);}catch(InterruptedException ex){}
+                }
                 break;
 
             default:
-
+                //TODO
         }
     }
+    
 
+    /**
+     * //TODO 
+     */
+    protected void checkForWin(){
+        for(Unit u : otherPlayer().units){
+            /*
+            if(u.getIsAlive()){
+                break;
+            }*/
+            if(otherPlayer().Tank.getIsAlive()){ //TODO - REMOVE -> TESTING PURPOSE
+                break;
+            }
+            else{
+                sendToClient("\n    YOU WON!    \n\n");
+                sendToClient("CLOSE");
+                otherPlayer().sendToClient("\n    YOU LOST!    \n\n");
+                otherPlayer().sendToClient("CLOSE");
+                System.exit(0);
+            }
+        }
+    }
 
     /**
      * //TODO
@@ -341,6 +405,7 @@ public class Player extends Thread {
         while(true){
             if(isMyTurn){
                 shoot();
+                checkForWin();
                 this.isMyTurn = false;
                 otherPlayer().isMyTurn = true;
             }

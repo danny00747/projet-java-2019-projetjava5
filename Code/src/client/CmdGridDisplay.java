@@ -92,16 +92,16 @@ public class CmdGridDisplay {
 
 		switch (val) {
 			case "Unit":
-				str = String.format("%c[42m", escCode) + String.format(" %-2c", '⏣');
+				str = String.format("%c[42m%c[30m", escCode, escCode) + String.format(" %-2c", '۩');
 				break;
 			case "Hit":
-				str = String.format("%c[43m%c[31m", escCode, escCode) + String.format(" %-2c", 'Ⓧ');
+				str = String.format("%c[43m%c[30m", escCode, escCode) + String.format(" %-2c", '✠');
 				break;
 			case "noHit":
-				str = String.format("%c[44m", escCode) + String.format(" %-2c", 'Ⓧ');
+				str = String.format("%c[44m%c[30m", escCode, escCode) + String.format(" %-2c", '✽');
 				break;
 			case "Destroyed":
-				str = String.format("%c[41m%c[33m", escCode, escCode) + String.format(" %-2c", 'Ⓧ');
+				str = String.format("%c[41m%c[30m", escCode, escCode) + String.format(" %-2c", '♰');
 				break;
 			default:
 				break;

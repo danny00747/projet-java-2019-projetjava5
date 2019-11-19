@@ -192,6 +192,10 @@ public class Client  {
                     gridDisplay.removeLines(Integer.parseInt(strFromServer));
                     break;
 
+                case "CLOSE": //remove lines
+                    System.exit(0);
+                    break;
+
                 default:
                     System.out.print(strFromServer);
             }

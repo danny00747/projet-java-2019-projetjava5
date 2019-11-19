@@ -12,7 +12,7 @@ import java.util.*;
 
 public class Server  { 	
     
-    private Scanner userInput = new Scanner(System.in);
+    private final Scanner userInput = new Scanner(System.in);
     private int port;
     private ServerSocket servSock;
     private Socket sock;
@@ -26,7 +26,8 @@ public class Server  {
 	protected static final String reset  = "\u001B[0m";
 	protected static final String purple = "\u001B[35m";
 	protected static final String yellow = "\u001B[33m";
-	protected static final String white  = "\u001B[37m";
+    protected static final String white  = "\u001B[37m";
+    protected final char escCode = 0x1B;
 	
     protected static HashMap<String,Player> Players = new HashMap<>();
 
@@ -54,12 +55,18 @@ public class Server  {
         //Selecting port number from user to use => Plus tard par interface graphique
     	//Attention => Le port du client devra etre identique sinon il ne "verra" pas le server !!
     	try {
+            System.out.print(String.format("%c[2J", escCode)); 		//Clear the whole screen
+		    System.out.print(String.format("%c[H", escCode));  		//set cursor to home 
         	System.out.println(purple+"Port number ?"+reset);
     		port = userInput.nextInt();
             servSock = new ServerSocket(port); //Creating a new serverSocket with port given by user. 
-            
-            System.out.println(red+"Server started !"+reset);
-            System.out.println("Waiting for player(s) to connect");
+            InetAddress inetAddress = InetAddress.getLocalHost();
+            System.out.print(String.format("%c[2J", escCode)); 		//Clear the whole screen
+		    System.out.print(String.format("%c[H", escCode));  		//set cursor to home 
+            System.out.println(red+"Server started!"+reset);
+            System.out.println("Players can connect whit the following information: ");
+            System.out.println("\nPort: "+ port +"\nIp : "+inetAddress.getHostAddress());
+            System.out.println("\nWaiting for player(s) to connect");
             int clientCount =0;
             // Infinite loop => Waiting that a client connects {accept() method}
             while (true)  { 
@@ -100,7 +107,7 @@ public class Server  {
             //TODO
         }
     	catch(InputMismatchException a) {
-        	System.out.println(Server.red+"FATAL ERROR :"+Server.reset+Server.purple+" IP and Port must be Integer"+Server.reset);
+        	System.out.println(Server.red + "FATAL ERROR :" + Server.reset+Server.purple+" IP and Port must be Integer"+Server.reset);
         }	 
     } 
 
