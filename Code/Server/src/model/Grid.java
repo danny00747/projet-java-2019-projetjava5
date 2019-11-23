@@ -3,9 +3,7 @@
  * @date 15/11/2019
  */
 
-package server;
-
-import java.util.Arrays;
+package model;
 
 /**
  * This class is a super class for creating different grid objects. 
@@ -22,15 +20,15 @@ public class Grid {
 
     /**
      * Method that converts a userfriendly cell coordinate such as "H4"
-     * into a uusable cell-indexes such as [7,3].
+     * into a usable cell-indexes such as [7,3].
      *
      * @param str {String} - cell coordinate in userfriendly format. ex: "H4"
      * @return {int[]} - cell coordinate in array format. ex: [7,3]
      */
-    protected int[] getCoordIndex(String str) {
+    public int[] getCoordIndex(String str) {
 
-        String rowName = str.substring(0, 1);// "H4" => Takes from index 0 intil 1 not included => "H"
-        String colName = str.substring(1);// "H4" => Takes from index 1 until end => "4"
+        String rowName = str.substring(0, 1);// "H4" => Takes from index 0 up to 1 not included => "H"
+        String colName = str.substring(1);// "H4" => Takes from index 1 up to the end => "4"
         int[] coordIndex = { -1, -1 };// initialised to {-1,-1} => if user enters incorrect row and colum => Error catched if coordIndex has -1 in it.
 
         for (int i = 0; i < rowNames.length; i++) {
@@ -48,12 +46,6 @@ public class Grid {
         }
 
         return coordIndex;
-    }
-
-    // for debugging only - do nut run if not for debugging
-    public static void main(String[] args) {
-        Grid g = new Grid();
-        System.out.println(Arrays.toString(g.getCoordIndex("H4")));
     }
 
 }

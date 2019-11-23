@@ -3,7 +3,7 @@
  * @date 12/11/2019
  */
 
-package server;
+package model;
 
 import java.util.HashMap;
 
@@ -29,7 +29,7 @@ public class myGrid extends Grid {
      * Constructor - populate hashmap with each grid cell as key and 
      * null for every value (no units are placed on the grid).
      */
-    protected myGrid() {
+    public myGrid() {
         for (String rowName : super.rowNames) {
             for (String colName : super.colNames) {
                 gridCells.put(rowName + colName, null);
@@ -43,7 +43,7 @@ public class myGrid extends Grid {
      * @param coord {String} - The coordinate of the grid cell, ex: "H4"
      * @param unit  {Unit} - The unit that is placed on that cell
      */
-    protected void setGridCell(String coord, Unit unit) {
+    public void setGridCell(String coord, Unit unit) {
         gridCells.replace(coord, unit);
     }
 
@@ -54,8 +54,16 @@ public class myGrid extends Grid {
      * @param coord {String} - The coordinate of the grid cell, ex: "H4"
      * @return {Unit} - The unit that is positioned in that cell
      */
-    protected Unit getGridCell(String coord) {
+    public Unit getGridCell(String coord) {
         return gridCells.get(coord);
+    }
+
+    /**
+     * Method that returns the whole gridCells HashMap 
+     * @return {HashMap<String, Integer>} - returns ridCells HashMap 
+     */
+    public HashMap<String, Unit> getGridCells(){
+        return gridCells;
     }
 
 }

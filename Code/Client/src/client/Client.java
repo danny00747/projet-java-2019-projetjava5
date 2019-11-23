@@ -25,11 +25,15 @@ public class Client  {
 
     private CmdGridDisplay gridDisplay = new CmdGridDisplay();
 
-	//Colours on ouput => ONLY WORKS ON UNIX NOT WINDOWS
-	private static final String red    = "\u001B[31m";
-	private static final String blue   = "\u001B[34m";
-	private static final String reset  = "\u001B[0m";
-    private static final String purple = "\u001B[35m";
+    //Escape characters tho control the cmdline display. => ! only works on unix systems !
+    public static final String RED_FG       = "\u001B[31m";
+    public static final String GREEN_FG     = "\u001B[32m";
+	public static final String BLUE_FG      = "\u001B[34m";
+	public static final String PURPLE_FG    = "\u001B[35m";
+	public static final String YELLOW_FG    = "\u001B[33m";
+    public static final String RESET_COLOR  = "\u001B[0m";
+    public static final String CLEAR_SCREEN = "\u001B[2J";
+    public static final String HOME_CURSOR  = "\u001B[H";
     
      /**
      * Constructor
@@ -57,30 +61,39 @@ public class Client  {
      */
     private void InitConnection(){
 
+        System.out.print(CLEAR_SCREEN);
+        System.out.print(HOME_CURSOR);
+
         // Retrieving client's name from user input :
         System.out.println("What's your name ?");
         name = scn.nextLine();
         checkNameClient(name,scn);
 
         // Retrieving port from user input :
-        System.out.println(purple+"Port number ?"+reset);
-        port = scn.nextInt();
-        System.out.println(blue+name+"> "+purple+port);
+        System.out.println(PURPLE_FG+"Port number ? (press enter for default port: 5555)"+RESET_COLOR);
+        //port = scn.nextInt();
+        String userStr = scn.nextLine();
+            if(userStr.equals("")){
+                port = 5555;
+            }
+            else{
+                port = Integer.valueOf(userStr);
+            }
+        System.out.println(BLUE_FG+name+"> "+PURPLE_FG+port+RESET_COLOR);
         
 
         //Retrieving ip adress from user input :
-        System.out.println(red+"IP address ? (nothing + enter = localhost)"+reset);
-        ip = scn.nextLine();
+        System.out.println(RED_FG+"IP address ? (nothing + enter = localhost)"+RESET_COLOR);
         ip = scn.nextLine();
         if (ip.length()==0) {ip = "localhost";}
         else if (ip.length()!=0) {System.out.println("ip entered");}
-        System.out.println(blue+name+"> "+red+ip+reset);
+        System.out.println(BLUE_FG+name+"> "+RED_FG+ip+RESET_COLOR);
 
         try{
         //Establish the connection with the server with IP and Port from user input
-        System.out.println(blue+"Waiting to connect to server..."+reset);
+        System.out.println(BLUE_FG+"Waiting to connect to server..."+RESET_COLOR);
         sock = new Socket(ip, port);
-        System.out.println(red+"Connected !"+reset);
+        System.out.println(RED_FG+"Connected !"+RESET_COLOR);
         System.out.println("__________________________");
 
         // In and out streams => Information received (inputStream) and sent (outputStream) :
@@ -92,10 +105,10 @@ public class Client  {
         }
         catch(IOException e){
             //e.printStackTrace(); => To show errors (I don't want users to see thoses...)
-            System.out.println(red+"Can't reach server...Check Ip/port and connectivity"+reset);
+            System.out.println(RED_FG+"Can't reach server...Check Ip/port and connectivity"+RESET_COLOR);
         }
         catch(InputMismatchException a) {
-        	System.out.println(red+"FATAL ERROR :"+reset+purple+" IP and Port must be Integer"+reset);
+        	System.out.println(RED_FG+"FATAL ERROR :"+PURPLE_FG+" IP and Port must be Integer"+RESET_COLOR);
         }
 
     }

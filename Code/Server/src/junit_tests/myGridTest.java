@@ -3,7 +3,9 @@
  * @date 12/11/2019
  */
 
-package server;
+package junit_tests;
+
+import model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
