@@ -26,7 +26,11 @@ Each one of these special actions can only be used if the linked building or veh
 
 ## Project status
 
-We are currently starting the design of the architecture. 
+* [x] architectural design
+* [x] working simple version in cmd-line
+* [ ] working advanced version in cmd-line
+* [ ] working advanced version in GUI
+
 
 ## Built with
 
