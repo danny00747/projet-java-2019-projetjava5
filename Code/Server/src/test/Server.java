@@ -6,11 +6,21 @@
 
 package test;
 
-import model.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.SocketException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import model.Player;
 
 /**
  * This class 
@@ -36,6 +46,20 @@ public class Server  {
      public static final String CLEAR_SCREEN = "\u001B[2J";
      public static final String HOME_CURSOR  = "\u001B[H";
 
+     
+     private void getIpv4Adress() throws SocketException {
+    	 Enumeration e = NetworkInterface.getNetworkInterfaces();
+    	 while (e.hasMoreElements()) {
+    		 NetworkInterface n = (NetworkInterface) e.nextElement();
+    		 Enumeration ee = n.getInetAddresses();
+    		 while (ee.hasMoreElements()) {
+    			 InetAddress i = (InetAddress) ee.nextElement();
+    			 if (i instanceof Inet4Address) {
+    				 System.out.println("IP: "+YELLOW_FG+i.getHostAddress()+RESET_COLOR);
+    				 }
+    		 }
+    	 }
+     }
     /**
      * Method that clears the cmdline Screen and sets the cursor to home.
      */
@@ -86,7 +110,8 @@ public class Server  {
             clearScreen();
             System.out.println(GREEN_FG+"Server started!\n"+RESET_COLOR);
             System.out.println("Players can connect whit the following information: ");
-            System.out.println("\nPort: "+ PURPLE_FG + port + RESET_COLOR +"\nIp : "+ YELLOW_FG +inetAddress.getHostAddress()+ RESET_COLOR);
+            System.out.println("\nPort: "+ PURPLE_FG + port + RESET_COLOR);
+            getIpv4Adress();
             System.out.println("\nWaiting for player(s) to connect\n");
 
 
@@ -133,9 +158,14 @@ public class Server  {
     /**
      * Run main to start the server
      */
-    public static void main(String[] args) throws Exception{
-        Server server = new Server();
-        server.initServer();
+    public static void main(String[] args){
+    	try {
+            Server server = new Server();
+            server.initServer();
+    	}
+        catch(NumberFormatException a) {
+        	System.out.println(RED_FG+"FATAL ERROR :"+PURPLE_FG+" IP and Port must be Integer"+RESET_COLOR);
+        }
     }
     	
 }
