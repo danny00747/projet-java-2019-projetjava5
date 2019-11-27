@@ -18,8 +18,8 @@ Each player has :
 In addition to the normal rules where a player can only shoot and hit one cell of the grid at a time, we added some special actions such as:
 
 * an airstrike (drops bombs on 7 cells horizontally or vertically)
-* a radar (discovers 4 cells)
-* a rocket strike (shoots 4 rockets randomly in a 7 by 7 cells area)
+* a radar (discovers 4 cells) //**TODO**
+* a rocket strike (shoots **5** rockets randomly in a 7 by 7 cells area)
 * ... 
 
 Each one of these special actions can only be used if the linked building or vehicle isn't destroyed and they have a "reload-time" to keep the game dynamic and strategically. 
@@ -28,8 +28,10 @@ Each one of these special actions can only be used if the linked building or veh
 
 * [x] architectural design
 * [x] working simple version in cmd-line
-* [ ] working advanced version in cmd-line
-* [ ] working advanced version in GUI
+* [x] working advanced version in cmd-line
+* [x] Ready for cmd-line demo ?
+* [x] working advanced version in GUI
+* [ ] Program finished ?
 
 
 ## Built with
