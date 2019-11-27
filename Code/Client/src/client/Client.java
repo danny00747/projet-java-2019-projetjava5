@@ -70,7 +70,6 @@ public class Client  {
 
         // Retrieving port from user input :
         System.out.println(PURPLE_FG+"Port number ? (press enter for default port: 5555)"+RESET_COLOR);
-        //port = scn.nextInt();
         String userStr = scn.nextLine();
             if(userStr.equals("")){
                 port = 5555;
@@ -86,7 +85,6 @@ public class Client  {
         System.out.println(RED_FG+"IP address ? (nothing + enter = localhost)"+RESET_COLOR);
         ip = scn.nextLine();
         if (ip.length()==0) {ip = "localhost";}
-        //else if (ip.length()!=0) {System.out.println("ip entered");}
         System.out.println(BLUE_FG+name+"> "+RED_FG+ip+RESET_COLOR);
 
         try{
@@ -125,7 +123,7 @@ public class Client  {
      * 
      * @return a string received from the server
      */
-    private String getFormServer(){
+    private String getFromServer(){
         try{
             return in.readUTF();
         }
@@ -144,8 +142,7 @@ public class Client  {
         String strToServer ="";
 
         while (true)  { 
-            strFromServer = getFormServer();
-            //System.out.print(strFromServer); 
+            strFromServer = getFromServer(); 
             switch(strFromServer){
                 case "displayGrid":
                     System.out.print("disp"); 
@@ -153,48 +150,48 @@ public class Client  {
                     break;
                     
                 case "Q?": //Server ask a question
-                    System.out.print(getFormServer()); //print the question 
+                    System.out.print(getFromServer()); //print the question 
                     strToServer = scn.nextLine();
                     sendToServer(strToServer);
                     break;
 
                 case "insertUnit":
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("Unit", strFromServer, false);
                     break;
                 
                 case "Hit": 
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("Hit", strFromServer, true);
                     break;
 
                 case "noHit":
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("noHit", strFromServer, true);
                     break;
                 
                 case "Destroyed":
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("Destroyed", strFromServer, true);
                     break;
                 
                 case "myDestroyed":
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("Destroyed", strFromServer, false);
                     break;
                 
                 case "myHit": 
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("Hit", strFromServer, false);
                     break;
 
                 case "myNoHit":
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.insertInGrid("noHit", strFromServer, false);
                     break;
 
                 case "Rem": //remove lines
-                    strFromServer = getFormServer();
+                    strFromServer = getFromServer();
                     gridDisplay.removeLines(Integer.parseInt(strFromServer));
                     break;
 

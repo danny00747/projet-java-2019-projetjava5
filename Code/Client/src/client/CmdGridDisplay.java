@@ -124,7 +124,7 @@ public class CmdGridDisplay {
 				break;
 		}
 
-		// insert int the ennemy's grid
+		// insert in the ennemy's grid
 		if (isOutGoing) {
 			gridSelect = 60;
 		}
