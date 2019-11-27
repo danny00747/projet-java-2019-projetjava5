@@ -2,7 +2,6 @@ package client;
 
 import java.io.*; 
 import java.net.*;
-import java.util.InputMismatchException;
 import java.util.Scanner; 
   
 /**
@@ -79,6 +78,7 @@ public class Client  {
             else{
                 port = Integer.valueOf(userStr);
             }
+            
         System.out.println(BLUE_FG+name+"> "+PURPLE_FG+port+RESET_COLOR);
         
 
@@ -86,7 +86,7 @@ public class Client  {
         System.out.println(RED_FG+"IP address ? (nothing + enter = localhost)"+RESET_COLOR);
         ip = scn.nextLine();
         if (ip.length()==0) {ip = "localhost";}
-        else if (ip.length()!=0) {System.out.println("ip entered");}
+        //else if (ip.length()!=0) {System.out.println("ip entered");}
         System.out.println(BLUE_FG+name+"> "+RED_FG+ip+RESET_COLOR);
 
         try{
@@ -103,14 +103,7 @@ public class Client  {
         out.writeUTF(name);//Sends client name to server
 
         }
-        catch(IOException e){
-            //e.printStackTrace(); => To show errors (I don't want users to see thoses...)
-            System.out.println(RED_FG+"Can't reach server...Check Ip/port and connectivity"+RESET_COLOR);
-        }
-        catch(InputMismatchException a) {
-        	System.out.println(RED_FG+"FATAL ERROR :"+PURPLE_FG+" IP and Port must be Integer"+RESET_COLOR);
-        }
-
+        catch(Exception e){}
     }
     
     /**
@@ -215,28 +208,18 @@ public class Client  {
         }
 
     }
-
-
-    public static void main(String[] args){ 
-        Client client = new Client();
-        client.InitConnection();
-        client.listenToServer();  
+    public static void main(String[] args){
+    	try {
+    		Client client = new Client();
+            client.InitConnection();
+            client.listenToServer();
+    	}
+        catch(NumberFormatException a) {
+        	System.out.println(RED_FG+"FATAL ERROR :"+PURPLE_FG+" IP and Port must be Integer"+RESET_COLOR);
+        }
+    	catch(NullPointerException a) {
+            System.out.println(RED_FG+"Can't reach server...Check Ip/port and connectivity"+RESET_COLOR);
+    	}
     } 
 
 }
-
-/*
-System.out.print(getFromServer);
-sendToServer = scn.nextLine();
-out.writeUTF(sendToServer);
-if(sendToServer.equals("end")) { 
-    System.out.println(blue+name+">"+reset+" Closing this connection...."); 
-    sock.close(); 
-    System.out.println(red+"Connection closed"+reset); 
-    scn.close(); 
-    in.close(); 
-    out.close(); 
-    System.exit(0);
-    break; 
-}
-*/
