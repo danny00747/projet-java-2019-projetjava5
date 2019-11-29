@@ -1,72 +1,83 @@
-package server;
 /**
  * @author Martin Perdaens
  */
+package model;
+
 import java.util.HashMap;
-/*
-* Cette classe permet de récupérer toute les informations concernant les différentes unité disponible
-* durant la partie.
-* 
-* Elle sert également à vérifier si une unité ou case à été détruite 
-*/
+
+/**
+ * This class discribes a unit with its name, size and status.
+ */
 public class Unit {
-    /**
-     * @param name {String} - Le nom de l'unité
-     * @param size {int} -La taille de l'unité
-     * @param coordState {String,Boolean}- case toujour en vie true = oui | false = non
-     * @param isAlive {Boolean} - unité envie true = oui | false = non
-     */
+
     private String name;
     private int size;
-    private boolean isAlive;                     
-    private HashMap<String, Boolean> coordState;
+    private boolean isAlive;
+    private int counterBonus;
+    private int counterBonusMax;
+    private boolean EtatBonus;                                         
+    protected HashMap<String, Boolean> coordState;
 
     /**
-     * description 
-     * 
-     * @param name reprend le nom de l'unité
-     * @param size reprend la taille
-     * @param coordState
-     * @param isAlive valeur par défaut "true"
+     * Constructor
      */
-    protected Unit(String name, int size) {
+    public Unit(String name, int size, int counterBonus) {
         this.name = name;
         this.size = size;
         this.isAlive = true;
+        this.counterBonus = counterBonus;
+        this.counterBonusMax = counterBonus;
+        this.EtatBonus = true;
         this.coordState = new HashMap<String, Boolean>();
     }
 
     /**
-     * desciption : Initier toutes les cases à true
+     * Method that populates the unit's HashMap and sets all the values tu true.
+     * This means that each cell of the unit is not hit.
      * 
-     * @param coords {String} - un tabelau des coordonnées
-     * 
+     * @param coords {String[]} - Array of all the coordinates on which the unit is placed 
      */    
     protected void initCoordState(String [] coords) {
     	for(int i= 0; i < coords.length; i++){
             coordState.put(coords[i],true);
         }
     }
+
     /**
-     * Permet de récupérer le nom de l'unité fournit par le joueur
-     * @return nom de l'unité
+     * Method that returns the name of the unit.
+     * 
+     * @return {String} - The name of the unit
      */
     protected String getName() {
         return name;
     }
+
     /**
-     * Permet de récupérer la taille d'une unité
-     * @return taille de l'unité
+     * Method that returns the size of the unit.
+     * The size of the unit is the total number off cells on which the unit is placed.
+     *  
+     * @return {int} - the size of the unit 
      */
     protected int getSize() {
         return size;
     }
+
+    /**
+     * Method that returns the state of one cell on which the unit is placed.
+     * The state can either be true if the cell is not hit or false if the cell is hit.
+     * 
+     * @param key {String} - The coordinate of the cell of which you want to know the state
+     * @return {boolean} - The state of the cell
+     */
     protected boolean getCoordState(String key) {
     	return coordState.get(key);
     }
+
     /**
-     * Permet de changer l'état d'une case d'une unité et de vérifier qu'elle case sont toujour en vie
-     * @param key {String} - La case qui a été cibler 
+     * Method that changes the state of the given cell cooridante of the unit.
+     * Checks if the unit is still alive after being shot, if not, sets the isAlive attribute to false.
+     * 
+     * @param key {String} - the coordinate of the cell of which the state needs to be changed
      */  
     protected void setCoordState(String key) {
     	coordState.replace(key, false);
@@ -78,12 +89,32 @@ public class Unit {
             isAlive = false;
         }
     }
+
     /**
-     * Permet d'indiqué si  l'unité est toujours en vie (jouable)
-     * @return l'état de la troupe
+     * Method that returns the general status of the unit. 
+     * It can either be alive or dead.
+     * 
+     * @return {boolean} - returns true if the unit is alive, false otherwise
      */
     protected boolean getIsAlive(){
     	return isAlive;
     }
+    /**
+     * Method thzt dectect the status of bonus
+     * It can either be active or disable
+     * 
+     * @return {boolean} - retrun true if the bonus is active, false not
+     */
+    protected boolean getEtatBonus(){
+            if(counterBonus > 0){
+                EtatBonus = false;
+                counterBonus--;
+            }
+            else{
+                EtatBonus = true;
+                counterBonus = counterBonusMax;
 
+            }   
+        return EtatBonus;
+    }
 }
