@@ -1,6 +1,6 @@
 # HOW TO LAUNCH GAME - INSTRUCTIONS
 
-Be sure to have at least [Java JDK 12](https://www.oracle.com/technetwork/java/javase/downloads/index.html) installed and added to your [PATH environement variable](https://docs.oracle.com/en/java/javase/13/install/installation-jdk-microsoft-windows-platforms.html#GUID-C11500A9-252C-46FE-BB17-FC5A9528EAEB).  
+Be sure to have at least [Java JDK 13](https://www.oracle.com/technetwork/java/javase/downloads/index.html) installed and added to your [PATH environement variable](https://docs.oracle.com/en/java/javase/13/install/installation-jdk-microsoft-windows-platforms.html#GUID-C11500A9-252C-46FE-BB17-FC5A9528EAEB).  
 
 ## Command-line version
 

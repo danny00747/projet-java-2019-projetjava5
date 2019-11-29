@@ -300,7 +300,7 @@ public class Player extends Thread {
         if(Airport.getIsAlive()){
             availableShotTypes += "- A ";
         }
-        if(RadarTower.getIsAlive()){
+        if(false){                // if(RadarTower.getIsAlive()){ //TODO
             availableShotTypes += "- D ";
         }
         if(RailwayGun.getIsAlive()){
@@ -483,6 +483,7 @@ public class Player extends Thread {
         
                     case "D":
                         //TODO -> pas urgent! 
+                        shotExecuted = true;
                         break;
         
                     case "B":
@@ -563,7 +564,10 @@ public class Player extends Thread {
     protected void play(){
         while(true){
             if(isMyTurn){
+                otherPlayer().sendToClient("It's not your turn, waiting for "+ this.userName +" to play.");
                 shoot();
+                otherPlayer().sendToClient("\u001B[2K");
+                otherPlayer().sendToClient("\u001B8");
                 checkForWin();
                 this.isMyTurn = false;
                 otherPlayer().isMyTurn = true;
