@@ -83,12 +83,12 @@ public class Player extends Thread {
         enemyGrid = new enemyGrid();
 
         //Creating the units and adding them to the units array.
-        Airport = new Unit("Airport (2x4)", 8, 7);
-        RadarTower = new Unit("Radar Tower (2x3)", 6, 5);
-        HeadQuarter = new Unit("HeadQuarter (2x2)", 4, 0);
-        RailwayGun = new Unit("Railway Gun (1x6)", 6, 8);
-        MMRL = new Unit("MMRL (2x2)", 4, 3);
-        Tank = new Unit("Tank (1x2)", 2, 0);
+        Airport = new Unit("Airport (2x4)", 8, 7, true);
+        RadarTower = new Unit("Radar Tower (2x3)", 6, 5, true);
+        HeadQuarter = new Unit("HeadQuarter (2x2)", 4, 0, true);
+        RailwayGun = new Unit("Railway Gun (1x6)", 6, 8, true);
+        MMRL = new Unit("MMRL (2x2)", 4, 3, true);
+        Tank = new Unit("Tank (1x2)", 2, 0, true);
         units[0] = Airport;
         units[1] = RadarTower;       
         units[2] = HeadQuarter;
@@ -389,7 +389,7 @@ public class Player extends Thread {
                     coord = myGrid.getCoordIndex(shotCoord);
                     if(coord[0] >= 0 && coord[1] >= 0){  
                         sendToClient("Q?");
-                        sendToClient("Enter the direction of the airstrike. H : Horizontal;  any other key : Vertical \n");
+                        sendToClient("Enter thcounterBonus > 0e direction of the airstrike. H : Horizontal;  any other key : Vertical \n");
                         String direction = getFormClient();
                         sendToClient("Rem"); sendToClient("2");
                         shotCoord ="";
@@ -418,7 +418,7 @@ public class Player extends Thread {
                         sendToClient("Coordinate out of range, please enter correct coordinate:\n");
                         shotCoord = getFormClient();
                         sendToClient("Rem"); sendToClient("2");
-                    }                
+                    }
                     break;
 
                 case "D":
@@ -487,11 +487,13 @@ public class Player extends Thread {
                             sleep(150);
                         }
                         shotExecuted = true;
+                        Airport.EtatBonus = false;               
                         break;
         
                     case "D":
                         //TODO -> pas urgent! 
                         shotExecuted = true;
+                        RadarTower.EtatBonus = false;               
                         break;
         
                     case "B":
@@ -500,7 +502,8 @@ public class Player extends Thread {
                         for(String coord : coordsArray){
                             checkForHit(coord);
                         }
-                        shotExecuted = true;    
+                        shotExecuted = true;
+                        RailwayGun.EtatBonus = false;     
                         break;
         
                     case "R":
@@ -511,6 +514,7 @@ public class Player extends Thread {
                             sleep(500);
                         }
                         shotExecuted = true;
+                        MMRL.EtatBonus = false; 
                         break;
                 }
 
