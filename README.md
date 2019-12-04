@@ -48,4 +48,4 @@ Group number: 5
 * **Valentin Morgan** - [momo007Dev](https://github.com/momo007Dev)
 
 ## License
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details
